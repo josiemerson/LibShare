@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Implementation-Title: libshare-springmvc
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: josie
+Implementation-Vendor-Id: br.com.libshare
+Build-Jdk: 1.8.0_181
+Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
+
