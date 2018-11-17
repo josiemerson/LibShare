@@ -1406,8 +1406,8 @@ public class TimeUtils {
 		
 	}
 	
-	public static void main(String[] args) throws Exception{
-	}
+//	public static void main(String[] args) throws Exception{
+//	}
 	
 	public static boolean isWeekend(long dateMillis) throws Exception{
 		Calendar cal = GregorianCalendar.getInstance();

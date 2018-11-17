@@ -31,7 +31,7 @@ public class UserRepositoryTest extends AbstractTest {
 
 	@Test
 	public void findPerEmail() {
-		UserEntity user = this.userRepository.findByEmail("admin@admin.com");
+		UserEntity user = this.userRepository.findByEmail("josiemersonsouzalacerda@gmail.com");
 
 		if(user == null) {
 			LOGGER.error("Usuário ou senha não cadastrados.");
@@ -42,11 +42,11 @@ public class UserRepositoryTest extends AbstractTest {
 
 	@Test
 	public void findUserPerId() {
-		UserEntity user = this.userRepository.getOne(1L);
-
-		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info("Test FindUserPerId(): " + user);
-		}
+//		UserEntity user = this.userRepository.getOne(1L);
+//
+//		if (LOGGER.isInfoEnabled()) {
+//			LOGGER.info("Test FindUserPerId(): " + user);
+//		}
 	}
 
 }

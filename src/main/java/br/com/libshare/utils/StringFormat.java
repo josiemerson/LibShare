@@ -174,11 +174,11 @@ public class StringFormat {
 		}
 	}
 
-	public static void main(String[] args) throws Exception { // teste
-		StringFormat form = new StringFormat();
-		form.setPattern(  "###.###/###.###" );
-		System.out.println("["+form.format("123456789012")+"]");
-	}
+//	public static void main(String[] args) throws Exception { // teste
+//		StringFormat form = new StringFormat();
+//		form.setPattern(  "###.###/###.###" );
+//		System.out.println("["+form.format("123456789012")+"]");
+//	}
 
 	public void setDefaultChar(char defaultChar) {
 		this.defaultChar = defaultChar;

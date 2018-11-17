@@ -100,10 +100,10 @@ public class BigDecimalUtil {
 		return false;
 	}
 
-	public static void main(String[] args) {
-		BigDecimal b = new BigDecimal("190095.0566");
-		System.out.println(formatCurrency(b, 3));
-	}
+//	public static void main(String[] args) {
+//		BigDecimal b = new BigDecimal("190095.0566");
+//		System.out.println(formatCurrency(b, 3));
+//	}
 
 	public static BigDecimal porcentagem(BigDecimal parte, BigDecimal todo) {
 		MathContext mathCtx = new MathContext(2, RoundingMode.HALF_UP);

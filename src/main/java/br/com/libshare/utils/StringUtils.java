@@ -618,9 +618,9 @@ public class StringUtils {
 		return buf.toString();
 	}
 
-	public static void main(String[] args) throws Exception{
-		System.out.println(copySemPadr("<SEM ENDERECO>                          ", 4, 5));
-	}
+//	public static void main(String[] args) throws Exception{
+//		System.out.println(copySemPadr("<SEM ENDERECO>                          ", 4, 5));
+//	}
 
 	@MethodInfo(name = "", description = "Retorna parte final do texto, complementado com espaços.", arguments = { "value", "width" }, category = CategoryFunction.CATEGORIA_FUNCAO_OUTRA)
 	public static String pad(Object value, int width) {

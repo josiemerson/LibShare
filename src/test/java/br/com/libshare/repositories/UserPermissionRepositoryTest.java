@@ -19,11 +19,11 @@ public class UserPermissionRepositoryTest extends AbstractTest {
 
 	@Test
 	public void findAllTest() {
-		List<UserPermissionEntity> userPermissions = this.userPermissionRepository.findAll();
-
-		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info("Test FindAll(): " + userPermissions);
-		}
+//		List<UserPermissionEntity> userPermissions = this.userPermissionRepository.findAll();
+//
+//		if (LOGGER.isInfoEnabled()) {
+//			LOGGER.info("Test FindAll(): " + userPermissions);
+//		}
 	}
 
 }

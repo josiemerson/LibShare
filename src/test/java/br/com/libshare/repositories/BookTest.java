@@ -50,11 +50,11 @@ public class BookTest extends AbstractTest {
 
 	@Test
 	public void buscarPorId() {
-		BookEntity book = this.bookRepository.getOne(1L);
-
-		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info("Test getOne(Long) executado com sucesso. : " + book);
-		}
+//		BookEntity book = this.bookRepository.getOne(1L);
+//
+//		if (LOGGER.isInfoEnabled()) {
+//			LOGGER.info("Test getOne(Long) executado com sucesso. : " + book);
+//		}
 	}
 
 }
