@@ -90,10 +90,10 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
 		.antMatchers(HttpMethod.PUT, ServicePath.FAVORITES_PATH).hasAnyAuthority(AUTH_ADMIN, AUTH_USER)
 		.antMatchers(HttpMethod.DELETE, ServicePath.FAVORITES_PATH).hasAnyAuthority(AUTH_ADMIN, AUTH_USER)
 		
-		.antMatchers(HttpMethod.GET, ServicePath.FRIENDS_PATH).permitAll()
-		.antMatchers(HttpMethod.POST, ServicePath.FRIENDS_PATH).permitAll()
-		.antMatchers(HttpMethod.PUT, ServicePath.FRIENDS_PATH).permitAll()
-		.antMatchers(HttpMethod.DELETE, ServicePath.FRIENDS_PATH).permitAll()
+		.antMatchers(HttpMethod.GET, ServicePath.FRIENDS_PATH + ServicePath.ALL).permitAll()
+		.antMatchers(HttpMethod.POST, ServicePath.FRIENDS_PATH + ServicePath.ALL).permitAll()
+		.antMatchers(HttpMethod.PUT, ServicePath.FRIENDS_PATH + ServicePath.ALL).permitAll()
+		.antMatchers(HttpMethod.DELETE, ServicePath.FRIENDS_PATH + ServicePath.ALL).permitAll()
 		
 		.antMatchers(HttpMethod.GET, ServicePath.SHARING_PORTAL_PATH + ServicePath.ALL).permitAll()
 		.antMatchers(HttpMethod.POST, ServicePath.SHARING_PORTAL_PATH + ServicePath.ALL).permitAll()

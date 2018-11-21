@@ -98,6 +98,9 @@ public class ProfileEntity extends BaseEntity<Long>{
 	@Column(name = "permitefone")
 	private String allowShowPhone;
 
+	@Column(name = "LATLONG")
+	private String latLong;
+
 //	@Transient
 //	private String fileNameImg;
 	
@@ -129,6 +132,7 @@ public class ProfileEntity extends BaseEntity<Long>{
 		this.telephone = telephone;
 		this.cep = cep;
 		this.pathFoto = pathFoto;
+		this.latLong = latLong;
 	}
 
 	public String getActive() {
@@ -265,6 +269,14 @@ public class ProfileEntity extends BaseEntity<Long>{
 
 	public void setAllowShowPhone(String allowShowPhone) {
 		this.allowShowPhone = allowShowPhone;
+	}
+
+	public String getLatLong() {
+		return latLong;
+	}
+
+	public void setLatLong(String latLong) {
+		this.latLong = latLong;
 	}
 
 //	@Transient

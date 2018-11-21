@@ -47,10 +47,13 @@ public class UserService extends GenericService<UserEntity, Long> {
 
 	@Override
 	public UserEntity insert(@RequestBody UserEntity user) throws Exception{
-		user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+		setPasswordEncode(user);
 
 		//verificar se a imagem está vindo com base64, se tiver converte se não deixa como está.
-		user.getProfile().setPathFoto(treatmentImgGetName(user));
+		ProfileEntity profile = user.getProfile();
+		if(profile != null) {
+			profile.setPathFoto(treatmentImgGetName(user));
+		}
 
 		return super.insert(user);
 	}
@@ -67,7 +70,10 @@ public class UserService extends GenericService<UserEntity, Long> {
 		user.setPermissions(permissions);
 		user.setPassword(this.passwordEncoder.encode(user.getPassword()));
 
-		user.getProfile().setPathFoto(treatmentImgGetName(user));
+		ProfileEntity profile = user.getProfile();
+		if(profile != null) {
+			profile.setPathFoto(treatmentImgGetName(user));
+		}
 
 		super.update(user);
 	}
@@ -104,7 +110,12 @@ public class UserService extends GenericService<UserEntity, Long> {
 			String error = "E-mail já cadastrado na nossa base de dados.";
 			response = this.showError(error);
 		} else {
-			user = this.insert(userEntity);
+			if(userEntity != null) {
+				userEntity.setPassword(this.passwordEncoder.encode(userEntity.getPassword()));
+			}
+//			setPasswordEncode(userEntity);
+
+			user = super.insert(userEntity);
 
 			response = new ResponseEntity<UserEntity>(user, HttpStatus.OK);			
 		}
@@ -129,5 +140,11 @@ public class UserService extends GenericService<UserEntity, Long> {
 		}
 
 		return fileName;
+	}
+
+	private void setPasswordEncode(UserEntity user) {
+		if (user != null) {
+			user.setPassword(this.passwordEncoder.encode(user.getPassword()));			
+		}
 	}
 }
