@@ -1,25 +1,26 @@
 package br.com.libshare.friends;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Id;
 
 import br.com.libshare.utils.BaseKey;
 
 @Embeddable
-public class FriendsKey extends BaseKey {
+public class FriendsId extends BaseKey implements Serializable{
 
-	private static final long serialVersionUID = 201602010536L;
-
-	@Column(name = "MEUCODUSU", length = 11, nullable = false)
+	@Column(name = "MEUCODUSU")
 	private Long myUserCode;
 
-	@Column(name = "CODUSUAMIGO", length = 11, nullable = false)
+	@Column(name = "CODUSUAMIGO")
 	private Long userCodeFriend;
 
-	public FriendsKey() {
+	public FriendsId() {
 	}
 
-	public FriendsKey(Long myUserCode, Long userCodeFriend) {
+	public FriendsId(Long myUserCode, Long userCodeFriend) {
 		super();
 		this.myUserCode = myUserCode;
 		this.userCodeFriend = userCodeFriend;
@@ -58,7 +59,7 @@ public class FriendsKey extends BaseKey {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		FriendsKey other = (FriendsKey) obj;
+		FriendsId other = (FriendsId) obj;
 		if (myUserCode == null) {
 			if (other.myUserCode != null)
 				return false;

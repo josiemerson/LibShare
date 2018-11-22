@@ -1,7 +1,6 @@
 package br.com.libshare.sharing;
 
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.AttributeOverride;
@@ -11,16 +10,11 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import br.com.libshare.sharingItem.SharingItemEntity;
-import br.com.libshare.user.UserEntity;
 import br.com.libshare.utils.BaseEntity;
 
 @Entity
@@ -42,20 +36,8 @@ public class SharingEntity extends BaseEntity<Long>{
 	@JoinColumn(name = "CODCOMP")
 	private List<SharingItemEntity> sharingItem;
 
-//	@NotNull
-//	@NotEmpty
-//	@Column(name = "TIPOCOMP", length = 1, nullable = false)
-//	private String sharingType;
-
 	@Column(name = "DHCOMP")
-	private Timestamp sharingDateAndHour;
-
-//	@Column(name = "DTDEVOL")
-//	private Timestamp devolutionDate;
-//
-//	@Column(name = "DTLIMITE")
-//	private Timestamp limitDate;
-
+	private LocalDateTime sharingDateAndHour;
 
 	@Column(name = "VLRCOMP", precision = 2)
 	private Float sharingValue;
@@ -63,15 +45,13 @@ public class SharingEntity extends BaseEntity<Long>{
 	public SharingEntity() {
 	}
 
-	public SharingEntity(Long userOrigin, Long userDestiny, Timestamp sharingDateAndHour,Float sharingValue) {
+	public SharingEntity(Long userOrigin, Long userDestiny, LocalDateTime sharingDateAndHour,Float sharingValue, List<SharingItemEntity> sharingItem) {
 		super();
 		this.userOrigin = userOrigin;
 		this.userDestiny = userDestiny;
-//		this.sharingType = sharingType;
 		this.sharingDateAndHour = sharingDateAndHour;
-//		this.devolutionDate = devolutionDate;
-//		this.limitDate = limitDate;
 		this.sharingValue = sharingValue;
+		this.sharingItem = sharingItem;
 	}
 
 	public Long getUserOrigin() {
@@ -90,37 +70,13 @@ public class SharingEntity extends BaseEntity<Long>{
 		this.userDestiny = userDestiny;
 	}
 
-//	public String getSharingType() {
-//		return sharingType;
-//	}
-//
-//	public void setSharingType(String sharingType) {
-//		this.sharingType = sharingType;
-//	}
-
-	public Timestamp getSharingDateAndHour() {
+	public LocalDateTime getSharingDateAndHour() {
 		return sharingDateAndHour;
 	}
 
-	public void setSharingDateAndHour(Timestamp sharingDateAndHour) {
+	public void setSharingDateAndHour(LocalDateTime sharingDateAndHour) {
 		this.sharingDateAndHour = sharingDateAndHour;
 	}
-
-//	public Timestamp getDevolutionDate() {
-//		return devolutionDate;
-//	}
-//
-//	public void setDevolutionDate(Timestamp devolutionDate) {
-//		this.devolutionDate = devolutionDate;
-//	}
-//
-//	public Timestamp getLimitDate() {
-//		return limitDate;
-//	}
-//
-//	public void setLimitDate(Timestamp limitDate) {
-//		this.limitDate = limitDate;
-//	}
 
 	public Float getSharingValue() {
 		return sharingValue;
@@ -137,6 +93,4 @@ public class SharingEntity extends BaseEntity<Long>{
 	public void setSharingItem(List<SharingItemEntity> sharingItem) {
 		this.sharingItem = sharingItem;
 	}
-
-	
 }

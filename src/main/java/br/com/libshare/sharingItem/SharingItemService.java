@@ -8,6 +8,6 @@ import br.com.libshare.utils.ServicePath;
 
 @RestController
 @RequestMapping(path = ServicePath.SHARING_ITEM_PORTAL_PATH)
-public class SharingItemService extends GenericService<SharingItemEntity, SharingItemKey> {
+public class SharingItemService extends GenericService<SharingItemEntity, Long> {
 
 }

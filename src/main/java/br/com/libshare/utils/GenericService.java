@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import br.com.libshare.exception.ServerException;
 import br.com.libshare.user.UserEntity;
 import br.com.libshare.utils.msg.HttpMessage;
 
+@EnableJpaRepositories(basePackages = "br.com.libshare")
 public abstract class GenericService<T extends BaseEntity<ID>, ID extends Serializable> extends HttpMessage implements ServiceMap {
 
 	private final Logger LOGGER = Logger.getLogger(this.getClass());
