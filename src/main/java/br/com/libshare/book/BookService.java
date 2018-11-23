@@ -72,20 +72,20 @@ public class BookService extends GenericService<BookEntity, Long> {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/mybooks/{user}/{genre}")
-	public ResponseEntity<List<BookEntity>> getAllBooksUser(@PathVariable("user") String user, @PathVariable("genre") String genre) {
-		ResponseEntity<List<BookEntity>> response = null;
+	public ResponseEntity<List<?>> getAllBooksUser(@PathVariable("user") String user, @PathVariable("genre") String genre) {
+		ResponseEntity<List<?>> response = null;
 		Query findBooks = em.createNativeQuery("SELECT L.* FROM LIVRO L WHERE "
 				+ "(:GENERO = '" + ALL_GENRE + "' OR L.GENERO = :GENERO) AND L.DONOLIVRO = :CODUSU AND L.STATUSLIVRO <> 'V'", BookEntity.class);
 		//COALESCE no mysql é o mesmo que NVL do oracle
 		
 		findBooks.setParameter("GENERO", genre);
 		findBooks.setParameter("CODUSU", user);
-		List<BookEntity> books = findBooks.getResultList();
+		List<?> books = findBooks.getResultList();
 		
 		if (books.isEmpty()) {
 			this.showAlert("Você não possui livros cadastrados.");
 		} else {
-			response = new ResponseEntity<List<BookEntity>>(books, HttpStatus.OK);
+			response = new ResponseEntity<List<?>>(books, HttpStatus.OK);
 		}
 
 		return response;

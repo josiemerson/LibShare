@@ -2,45 +2,38 @@ package br.com.libshare.user;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.Mapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.JsonObject;
-
 import br.com.libshare.permission.PermissionEntity;
 import br.com.libshare.profile.ProfileEntity;
-import br.com.libshare.profile.ProfileRepository;
 import br.com.libshare.utils.GenericService;
 import br.com.libshare.utils.ServicePath;
 import br.com.libshare.utils.image.DataImage;
 import br.com.libshare.utils.image.ImageUtils;
 
+@CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
 @RestController
 @RequestMapping(path = ServicePath.USER_PATH)
 public class UserService extends GenericService<UserEntity, Long> {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
-	@Autowired
-	private ProfileRepository profileRepository;
 
 	@PersistenceContext
 	private EntityManager em;
@@ -68,11 +61,21 @@ public class UserService extends GenericService<UserEntity, Long> {
 		permissions.add(permission);
 
 		user.setPermissions(permissions);
-		user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+
+		UserEntity userDB = this.getOne(user.getId());
+		if (!userDB.getPassword().equals(user.getPassword())) {
+			user.setPassword(this.passwordEncoder.encode(user.getPassword()));			
+		}
 
 		ProfileEntity profile = user.getProfile();
 		if(profile != null) {
-			profile.setPathFoto(treatmentImgGetName(user));
+			String img = treatmentImgGetName(user);
+			if (img != null) {
+
+				profile.setPathFoto(img);				
+			} else {
+				profile.setPathFoto(userDB.getProfile().getPathFoto());
+			}
 		}
 
 		super.update(user);
@@ -80,8 +83,21 @@ public class UserService extends GenericService<UserEntity, Long> {
 
 	@Override
 	public UserEntity getOne(@PathVariable("id")Long id) {
-		UserEntity user = super.getOne(id); 
-		UserEntity user1 = ((UserRepository)super.genericRepository).findByEmail("josiemersonsouzalacerda@gmail.com");
+		Query userResult = em.createNativeQuery("SELECT A.* FROM USUARIO A WHERE A.CODUSU = :CODUSU", UserEntity.class);
+		userResult.setParameter("CODUSU", id);
+
+		Query profileResult = em.createNativeQuery("SELECT A.* FROM PERFIL A WHERE A.CODUSU = :CODUSU AND A.ATIVO = 'S'", ProfileEntity.class);
+		profileResult.setParameter("CODUSU", id);
+
+		UserEntity user = null;
+		try {
+			user = (UserEntity) userResult.getSingleResult();
+			ProfileEntity profile = (ProfileEntity) profileResult.getSingleResult();
+
+			user.setProfile(profile);
+		}catch (NoResultException e) {
+		}
+
 		return user;
 	}
 

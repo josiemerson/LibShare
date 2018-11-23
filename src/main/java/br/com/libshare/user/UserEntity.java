@@ -51,24 +51,18 @@ public class UserEntity extends BaseEntity<Long>{
 	private ProfileEntity profile;
 
 	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "usuario_permissao", joinColumns = @JoinColumn(name = "codusu"), inverseJoinColumns = @JoinColumn(name = "codpermissao") )
+	@JoinTable(name = "usuariopermissao", joinColumns = @JoinColumn(name = "CODUSU"), inverseJoinColumns = @JoinColumn(name = "CODPERMISSAO") )
 	private List<PermissionEntity> permissions;
-
-//	@ManyToMany(fetch = FetchType.EAGER)
-//	@JoinTable(name = "amigos", joinColumns = @JoinColumn(name = "MEUCODUSU"), inverseJoinColumns = @JoinColumn(name = "CODUSUAMIGO") )
-//	private List<UserEntity> friends;
 
 	public UserEntity() {
 	}
 
-	public UserEntity(String email, String password, ProfileEntity profile, List<PermissionEntity> permissions,
-			 List<UserEntity> friends) {
+	public UserEntity(String email, String password, ProfileEntity profile, List<PermissionEntity> permissions) {
 		super();
 		this.email = email;
 		this.password = password;
 		this.profile = profile;
 		this.permissions = permissions;
-//		this.friends = friends;
 	}
 
 	public String getEmail() {
@@ -102,12 +96,4 @@ public class UserEntity extends BaseEntity<Long>{
 	public void setPermissions(List<PermissionEntity> permissions) {
 		this.permissions = permissions;
 	}
-
-//	public List<UserEntity> getFriends() {
-//		return friends;
-//	}
-//
-//	public void setFriends(List<UserEntity> friends) {
-//		this.friends = friends;
-//	}
 }

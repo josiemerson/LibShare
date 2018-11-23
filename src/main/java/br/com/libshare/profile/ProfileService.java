@@ -10,6 +10,7 @@ import javax.persistence.Query;
 import org.aspectj.bridge.MessageUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,6 +21,7 @@ import br.com.libshare.user.UserRepository;
 import br.com.libshare.utils.GenericService;
 import br.com.libshare.utils.ServicePath;
 
+@CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
 @RestController
 @RequestMapping(path = ServicePath.PROFILE_PATH)
 public class ProfileService extends GenericService<ProfileEntity, Long> {
