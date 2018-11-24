@@ -149,6 +149,7 @@ public class UserService extends GenericService<UserEntity, Long> {
 			DataImage dataImage = new DataImage();
 			dataImage.base64Image  = pathFoto.split("_filename@", -1)[1].split(",", -1)[1];
 			dataImage.nameFile =  fileName;
+			dataImage.codUsu = user.getId();
 			try {
 				File file = ImageUtils.convertBase64ToFile(dataImage);				
 			}catch (Exception e) {

@@ -22,7 +22,7 @@ public class ImageUtils {
 		String pathSave = "";
 		if (dataImage.codBook != null) {
 			pathSave = PATH_IMG_DEFAULT + "users/ID_" + dataImage.codUsu + "/books/";
-		} else if (dataImage.codBook != null) {
+		} else if (dataImage.codUsu != null) {
 			pathSave = PATH_IMG_DEFAULT + "users/ID_" + dataImage.codUsu + "/";			
 		}
 
@@ -30,6 +30,11 @@ public class ImageUtils {
 		if(StringUtils.isEmpty(pathSave)) {
 			throw new Exception("Caminho passado é nulo.");
 		} else {
+			File dir = new File(pathSave);
+			if (!dir.exists()) {
+				dir.mkdir();
+			}
+
 			pathSave += dataImage.nameFile;
 
 			file = new File(pathSave);

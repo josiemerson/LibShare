@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.libshare.profile.ProfileEntity;
 import br.com.libshare.user.UserEntity;
 import br.com.libshare.user.UserRepository;
 import br.com.libshare.utils.GenericService;
@@ -100,10 +101,22 @@ public class FriendsService extends GenericService<FriendsEntity,Long> {
 	private UserEntity getUserById(Long id) {
 		UserEntity user = null; 
 		if (id != null) {
-			Query findProfiles = em.createNativeQuery("SELECT A.* FROM USUARIO A INNER JOIN PERFIL P ON (A.CODUSU = P.CODUSU)  WHERE A.CODUSU = :CODUSU AND P.ATIVO = 'S'", UserEntity.class);
-			findProfiles.setParameter("CODUSU", id);
+			Query findUser = em.createNativeQuery("SELECT A.* FROM USUARIO A INNER JOIN PERFIL P ON (A.CODUSU = P.CODUSU)  WHERE A.CODUSU = :CODUSU AND P.ATIVO = 'S'", UserEntity.class);
+			findUser.setParameter("CODUSU", id);
 
-			user = (UserEntity) findProfiles.getSingleResult();
+			try {
+				user = (UserEntity) findUser.getSingleResult();
+
+				Query findProfiles = em.createNativeQuery("SELECT P.* FROM PERFIL P WHERE P.CODUSU = :CODUSU", ProfileEntity.class);
+				findProfiles.setParameter("CODUSU", id);
+
+				try {
+					ProfileEntity profile = (ProfileEntity) findProfiles.getSingleResult();
+					user.setProfile(profile);
+				}catch (NoResultException ignore) {
+				}
+			}catch (NoResultException ignore) {
+			}
 		}
 
 		return user;

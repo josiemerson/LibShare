@@ -1,5 +1,6 @@
 package br.com.libshare.book;
 
+import java.io.File;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -18,8 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.libshare.exception.ServerException;
 import br.com.libshare.profile.ProfileEntity;
+import br.com.libshare.user.UserEntity;
 import br.com.libshare.utils.GenericService;
 import br.com.libshare.utils.ServicePath;
+import br.com.libshare.utils.image.DataImage;
+import br.com.libshare.utils.image.ImageUtils;
 
 @RestController
 @RequestMapping(path = ServicePath.BOOK_CASE_PATH)
@@ -92,23 +96,37 @@ public class BookService extends GenericService<BookEntity, Long> {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value="/bookNew")
-	public BookEntity insertNewBook(@RequestBody BookEntity entityObject) {
-		this.LOGGER.debug(String.format("Request insert new record [%s].", entityObject));
+	public BookEntity insertNewBook(@RequestBody BookEntity bookEntity) {
+		this.LOGGER.debug(String.format("Request insert new record [%s].", bookEntity));
 
-		return super.genericRepository.save(entityObject);
+		String img = treatmentImgGetName(bookEntity);
+		
+		if (img != null) {
+			bookEntity.setPathFoto(img);
+		} 
+		
+		return super.genericRepository.save(bookEntity);
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, value="/bookEdit")
-	public void updateBook(@RequestBody BookEntity entityObject) {
-		this.LOGGER.debug(String.format("Request to update the record [%s].", entityObject));
+	public void updateBook(@RequestBody BookEntity bookEntity) {
+		this.LOGGER.debug(String.format("Request to update the record [%s].", bookEntity));
 
-		if (entityObject.getId() == null) {
-			String errorMessage = String.format("ID da entidade [%s] está nulo.", entityObject.getClass());
+		if (bookEntity.getId() == null) {
+			String errorMessage = String.format("ID da entidade [%s] está nulo.", bookEntity.getClass());
 			this.LOGGER.error(errorMessage);
 			throw new ServerException(errorMessage);
 		}
 
-		this.genericRepository.save(entityObject);
+		String img = treatmentImgGetName(bookEntity);
+		if (img != null) {
+			bookEntity.setPathFoto(img);
+		} else {
+			BookEntity bookDB = this.getOne(bookEntity.getId());
+			bookEntity.setPathFoto(bookDB.getPathFoto());
+		}
+
+		this.genericRepository.save(bookEntity);
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE, value="/bookDelete")
@@ -117,4 +135,29 @@ public class BookService extends GenericService<BookEntity, Long> {
 
 		this.genericRepository.delete(entityObject);
 	}
+	
+	private String treatmentImgGetName(BookEntity book) {
+		String pathFoto = book.getPathFoto();
+		String[] tokenBase64 = null;
+		String fileName = pathFoto;
+		if (pathFoto != null && pathFoto.indexOf("base64") > -1) {
+			fileName = pathFoto.split("_user@", -1)[1].split("_filename@", -1)[0];
+
+			DataImage dataImage = new DataImage();
+			dataImage.base64Image  = pathFoto.split("_filename@", -1)[1].split(",", -1)[1];
+			String codUsu  = pathFoto.split("_user@", -1)[0];
+			if (codUsu != null) {
+				dataImage.codUsu = new Long(codUsu);
+			}
+			dataImage.nameFile =  fileName;
+			dataImage.codBook = book.getId();
+			try {
+				File file = ImageUtils.convertBase64ToFile(dataImage);				
+			}catch (Exception e) {
+			}
+		}
+
+		return fileName;
+	}
+
 }
