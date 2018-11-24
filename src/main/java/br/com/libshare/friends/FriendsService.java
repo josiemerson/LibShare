@@ -35,7 +35,8 @@ public class FriendsService extends GenericService<FriendsEntity,Long> {
 	@RequestMapping(method = RequestMethod.GET, value = "/statusFriend/{codUsu}/{codUsuFriend}")
 	public ResponseEntity<?> getFriendPerId( @PathVariable("codUsu") Long codUsu, @PathVariable("codUsuFriend") Long codUsuFriend) {
 		ResponseEntity<?> response = null;
-		Query findProfiles = em.createNativeQuery("SELECT A.* FROM AMIGOS A WHERE A.MEUCODUSU = :CODUSU AND A.CODUSUAMIGO = :CODUSUAMIGO", FriendsEntity.class);
+		Query findProfiles = em.createNativeQuery("SELECT A.* FROM AMIGOS A WHERE "
+				+ "(A.MEUCODUSU = :CODUSU OR A.CODUSUAMIGO = :CODUSU)  AND (A.MEUCODUSU = :CODUSUAMIGO OR A.CODUSUAMIGO = :CODUSUAMIGO) ", FriendsEntity.class);
 		findProfiles.setParameter("CODUSU", codUsu);
 		findProfiles.setParameter("CODUSUAMIGO", codUsuFriend);
 
@@ -68,7 +69,7 @@ public class FriendsService extends GenericService<FriendsEntity,Long> {
 	@RequestMapping(method = RequestMethod.GET, value="/listFriend/{codUsu}/{status}")
 	public ResponseEntity<?> newFriends(@PathVariable("codUsu") Long codUsu,@PathVariable("status") String status) throws Exception {
 		ResponseEntity<?> response = null;
-		Query findProfiles = em.createNativeQuery("SELECT A.* FROM AMIGOS A WHERE A.MEUCODUSU = :CODUSU AND (:STATUS = 'A' OR A.STATUS = :STATUS)", FriendsEntity.class);
+		Query findProfiles = em.createNativeQuery("SELECT A.* FROM AMIGOS A WHERE (A.MEUCODUSU = :CODUSU OR A.CODUSUAMIGO = :CODUSU) AND (:STATUS = 'A' OR A.STATUS = :STATUS)", FriendsEntity.class);
 		findProfiles.setParameter("CODUSU", codUsu);
 		findProfiles.setParameter("STATUS", status);
 
@@ -80,7 +81,12 @@ public class FriendsService extends GenericService<FriendsEntity,Long> {
 
 				for(FriendsEntity friend : friends) {
 
-					UserEntity userFriend = getUserById(friend.getUserCodeFriend());
+					Long codUserFriend = friend.getMyUserCode();
+					if (codUserFriend == codUsu) {
+						codUserFriend =  friend.getUserCodeFriend();
+					}
+
+					UserEntity userFriend = getUserById(codUserFriend);
 					if (userFriend != null) {
 						FriendsResponse responseFriends = new FriendsResponse(friend, userFriend);
 						friendsResponse.add(responseFriends);						
