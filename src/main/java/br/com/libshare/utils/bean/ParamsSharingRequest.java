@@ -12,6 +12,9 @@ public class ParamsSharingRequest {
 	private String 		statusBook;
 	private String		sharingWithMe;
 	
+	public ParamsSharingRequest() {
+	}
+	
 	public ParamsSharingRequest(Long codUsu, Long codUsuLogged, LocalDate dtCompIni, LocalDate dtCompFim, LocalDate dtDevIni,
 			LocalDate dtDevFim, String statusBook, String sharingWithMe) {
 		super();

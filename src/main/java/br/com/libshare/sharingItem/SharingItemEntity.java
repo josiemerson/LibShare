@@ -1,6 +1,7 @@
 package br.com.libshare.sharingItem;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -36,7 +37,7 @@ public class SharingItemEntity extends BaseEntity<Long> {
 	private String sharingType;
 
 	@Column(name = "DTDEVOL")
-	private LocalDate devolutionDate;
+	private Date devolutionDate;
 
 	@Column(name = "VLRITEMCOMP", precision = 2, nullable = false)
 	private Float sharingItemValue;
@@ -57,15 +58,24 @@ public class SharingItemEntity extends BaseEntity<Long> {
 	public SharingItemEntity() {
 	}
 
-	public SharingItemEntity(String sharingType, LocalDate devolutionDate, Float sharingItemValue,
+	public SharingItemEntity(Long sharing, String sharingType, Date devolutionDate, Float sharingItemValue,
 			BookEntity book, String observation) {
 		super();
+		this.sharing = sharing;
 		this.sharingType = sharingType;
 		this.devolutionDate = devolutionDate;
 		this.sharingItemValue = sharingItemValue;
 //		this.book = book;
 		this.book = book;
 		this.observation = observation;
+	}
+
+	public Long getSharing() {
+		return sharing;
+	}
+
+	public void setSharing(Long sharing) {
+		this.sharing = sharing;
 	}
 
 	public String getSharingType() {
@@ -76,11 +86,11 @@ public class SharingItemEntity extends BaseEntity<Long> {
 		this.sharingType = sharingType;
 	}
 
-	public LocalDate getDevolutionDate() {
+	public Date getDevolutionDate() {
 		return devolutionDate;
 	}
 
-	public void setDevolutionDate(LocalDate devolutionDate) {
+	public void setDevolutionDate(Date devolutionDate) {
 		this.devolutionDate = devolutionDate;
 	}
 
