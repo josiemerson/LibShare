@@ -54,6 +54,9 @@ public class SharingItemEntity extends BaseEntity<Long> {
 	@Column(name = "STATUSCOMP")
 	private String statusSharing;
 
+	public SharingItemEntity() {
+	}
+
 	public SharingItemEntity(String sharingType, LocalDate devolutionDate, Float sharingItemValue,
 			BookEntity book, String observation) {
 		super();

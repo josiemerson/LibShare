@@ -1,30 +1,25 @@
 package br.com.libshare.utils.bean;
 
+import java.util.List;
+
 import br.com.libshare.sharing.SharingEntity;
 import br.com.libshare.sharingItem.SharingItemEntity;
 
 public class SharingResponse {
-	private SharingEntity sharingEntity;
-	private SharingItemEntity sharingItemEntity;
+	private final SharingEntity sharingEntity;
+	private final List<SharingItemEntity> sharingItens;
 
-	public SharingResponse(SharingEntity sharingEntity, SharingItemEntity sharingItemEntity) {
+	public SharingResponse(SharingEntity sharingEntity, List<SharingItemEntity> sharingItens) {
 		this.sharingEntity = sharingEntity;
-		this.sharingItemEntity = sharingItemEntity;
+		this.sharingItens = sharingItens;
 	}
 
 	public SharingEntity getSharingEntity() {
 		return sharingEntity;
 	}
 
-	public void setSharingEntity(SharingEntity sharingEntity) {
-		this.sharingEntity = sharingEntity;
+	public List<SharingItemEntity> getSharingItens() {
+		return sharingItens;
 	}
 
-	public SharingItemEntity getSharingItemEntity() {
-		return sharingItemEntity;
-	}
-
-	public void setSharingItemEntity(SharingItemEntity sharingItemEntity) {
-		this.sharingItemEntity = sharingItemEntity;
-	}
 }

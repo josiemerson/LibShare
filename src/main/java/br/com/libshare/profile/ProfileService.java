@@ -51,12 +51,30 @@ public class ProfileService extends GenericService<ProfileEntity, Long> {
 
 		return response;
 	}
-
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/bookgenre/{genre}/{codUsu}")
+	public ResponseEntity<List<ProfileEntity>> getUserPerGenreBookWithoutUserLogged(@PathVariable("genre") String genre, @PathVariable("codUsu") Long codUsuLogged) {
+		return getProfiles(genre, codUsuLogged);
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/bookgenre/{genre}")
 	public ResponseEntity<List<ProfileEntity>> getUserPerGenreBook(@PathVariable("genre") String genre) {
+		return getProfiles(genre, null);
+	}
+	
+	private ResponseEntity<List<ProfileEntity>> getProfiles(String genre, Long codUsuLogged){
 		ResponseEntity<List<ProfileEntity>> response = null;
-		Query findProfiles = em.createNativeQuery("SELECT P.* FROM PERFIL P INNER JOIN LIVRO L ON (P.CODUSU = L.DONOLIVRO) WHERE L.GENERO = :GENERO AND P.ATIVO = 'S'", ProfileEntity.class);
+		StringBuilder sbQuery = new StringBuilder("SELECT DISTINCT P.* FROM PERFIL P INNER JOIN LIVRO L ON (P.CODUSU = L.DONOLIVRO) WHERE L.GENERO = :GENERO AND P.ATIVO = 'S'");
+		if (codUsuLogged != null) {
+			sbQuery.append(" AND P.CODUSU <> :CODUSULOGGED ");
+		}
+
+		Query findProfiles = em.createNativeQuery(sbQuery.toString(), ProfileEntity.class);
 		findProfiles.setParameter("GENERO", genre);
+		if (codUsuLogged != null) {
+			findProfiles.setParameter("CODUSULOGGED", codUsuLogged);
+		}
+
 		List<ProfileEntity> profiles = findProfiles.getResultList();
 
 		if (profiles.isEmpty()) {
