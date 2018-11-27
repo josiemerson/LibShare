@@ -59,7 +59,7 @@ public class SharingItemEntity extends BaseEntity<Long> {
 	}
 
 	public SharingItemEntity(Long sharing, String sharingType, Date devolutionDate, Float sharingItemValue,
-			BookEntity book, String observation) {
+			BookEntity book, String observation, String statusSharing) {
 		super();
 		this.sharing = sharing;
 		this.sharingType = sharingType;
@@ -68,6 +68,7 @@ public class SharingItemEntity extends BaseEntity<Long> {
 //		this.book = book;
 		this.book = book;
 		this.observation = observation;
+		this.statusSharing = statusSharing;
 	}
 
 	public Long getSharing() {

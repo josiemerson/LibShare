@@ -1,5 +1,10 @@
 package br.com.libshare.security;
 
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,6 +19,9 @@ import br.com.libshare.user.UserRepository;
 @Component
 public class UserDetail implements UserDetailsService {
 
+	@PersistenceContext
+	private EntityManager em;
+	
 	@Autowired
 	private UserRepository userRepository;
 
@@ -24,8 +32,14 @@ public class UserDetail implements UserDetailsService {
 		if (user == null) {
 			throw new UsernameNotFoundException("Usuário com email \"" + email + "\" não encontrado.");
 		}
-
-		ProfileEntity profileEntity = user.getProfile();
+		
+		Query profileResult = em.createNativeQuery("SELECT A.* FROM PERFIL A WHERE A.CODUSU = :CODUSU AND A.ATIVO = 'S'", ProfileEntity.class);
+		profileResult.setParameter("CODUSU", user.getId());
+		ProfileEntity profileEntity =null;
+		try {
+			profileEntity = (ProfileEntity) profileResult.getSingleResult();
+		}catch (NoResultException ignore) {
+		}
 
 		String name = profileEntity == null ? "" : profileEntity.getName();
 		LoginDetailBean login = new LoginDetailBean(name, user.getEmail(), user.getPassword(), user.getId());

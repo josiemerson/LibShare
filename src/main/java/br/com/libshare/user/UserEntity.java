@@ -47,7 +47,7 @@ public class UserEntity extends BaseEntity<Long>{
 	private String password;
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name = "CODUSU")
+	@JoinColumn(name = "codusu")
 	private ProfileEntity profile;
 
 	@ManyToMany(fetch = FetchType.EAGER)

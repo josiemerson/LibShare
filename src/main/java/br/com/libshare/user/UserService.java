@@ -74,7 +74,10 @@ public class UserService extends GenericService<UserEntity, Long> {
 
 				profile.setPathFoto(img);				
 			} else {
-				profile.setPathFoto(userDB.getProfile().getPathFoto());
+				if (userDB.getProfile() != null) {
+					
+					profile.setPathFoto(userDB.getProfile().getPathFoto());
+				}
 			}
 		}
 
@@ -143,19 +146,22 @@ public class UserService extends GenericService<UserEntity, Long> {
 		String pathFoto = user.getProfile().getPathFoto();
 		String[] tokenBase64 = null;
 		String fileName = null;
-		if (pathFoto != null && pathFoto.indexOf("base64") > -1) {
-			fileName = pathFoto.split("_filename@", -1)[0];
-
-			DataImage dataImage = new DataImage();
-			dataImage.base64Image  = pathFoto.split("_filename@", -1)[1].split(",", -1)[1];
-			dataImage.nameFile =  fileName;
-			dataImage.codUsu = user.getId();
-			try {
-				File file = ImageUtils.convertBase64ToFile(dataImage);				
-			}catch (Exception e) {
+		if (pathFoto != null) { 
+			if(pathFoto.indexOf("base64") > -1) {
+				fileName = pathFoto.split("_filename@", -1)[0];
+	
+				DataImage dataImage = new DataImage();
+				dataImage.base64Image  = pathFoto.split("_filename@", -1)[1].split(",", -1)[1];
+				dataImage.nameFile =  fileName;
+				dataImage.codUsu = user.getId();
+				try {
+					File file = ImageUtils.convertBase64ToFile(dataImage);				
+				}catch (Exception e) {
+				}
+			} else if ("../../img/users/112312s3ko13a123xomnajcnhasuser.png".equals(pathFoto)) {
+				fileName = "112312s3ko13a123xomnajcnhasuser.png";
 			}
 		}
-
 		return fileName;
 	}
 

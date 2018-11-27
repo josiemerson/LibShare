@@ -1,22 +1,23 @@
 package br.com.libshare.utils.bean;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 public class ParamsSharingRequest {
 	private Long 		codUsu;
 	private Long 		codUsuLogged;
-	private LocalDate 	dtCompIni;
-	private LocalDate 	dtCompFim;
-	private LocalDate 	dtDevIni;
-	private LocalDate 	dtDevFim;
+	private Date 		dtCompIni;
+	private Date 		dtCompFim;
+	private Date 		dtDevIni;
+	private Date 		dtDevFim;
 	private String 		statusBook;
 	private String		sharingWithMe;
 	
 	public ParamsSharingRequest() {
 	}
 	
-	public ParamsSharingRequest(Long codUsu, Long codUsuLogged, LocalDate dtCompIni, LocalDate dtCompFim, LocalDate dtDevIni,
-			LocalDate dtDevFim, String statusBook, String sharingWithMe) {
+	public ParamsSharingRequest(Long codUsu, Long codUsuLogged, Date dtCompIni, Date dtCompFim, Date dtDevIni,
+			Date dtDevFim, String statusBook, String sharingWithMe) {
 		super();
 		this.codUsu = codUsu;
 		this.codUsuLogged = codUsuLogged;
@@ -42,28 +43,28 @@ public class ParamsSharingRequest {
 		this.codUsuLogged = codUsuLogged;
 	}
 
-	public LocalDate getDtCompIni() {
+	public Date getDtCompIni() {
 		return dtCompIni;
 	}
-	public void setDtCompIni(LocalDate dtCompIni) {
+	public void setDtCompIni(Date dtCompIni) {
 		this.dtCompIni = dtCompIni;
 	}
-	public LocalDate getDtCompFim() {
+	public Date getDtCompFim() {
 		return dtCompFim;
 	}
-	public void setDtCompFim(LocalDate dtCompFim) {
+	public void setDtCompFim(Date dtCompFim) {
 		this.dtCompFim = dtCompFim;
 	}
-	public LocalDate getDtDevIni() {
+	public Date getDtDevIni() {
 		return dtDevIni;
 	}
-	public void setDtDevIni(LocalDate dtDevIni) {
+	public void setDtDevIni(Date dtDevIni) {
 		this.dtDevIni = dtDevIni;
 	}
-	public LocalDate getDtDevFim() {
+	public Date getDtDevFim() {
 		return dtDevFim;
 	}
-	public void setDtDevFim(LocalDate dtDevFim) {
+	public void setDtDevFim(Date dtDevFim) {
 		this.dtDevFim = dtDevFim;
 	}
 	public String getStatusBook() {

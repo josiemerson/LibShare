@@ -1,6 +1,7 @@
 package br.com.libshare.sharing;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -19,14 +20,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.JsonObject;
 
+import br.com.libshare.book.BookEntity;
 import br.com.libshare.friends.FriendsEntity;
 import br.com.libshare.friends.FriendsResponse;
+import br.com.libshare.profile.ProfileEntity;
 import br.com.libshare.sharingItem.SharingItemEntity;
 import br.com.libshare.user.UserEntity;
 import br.com.libshare.utils.GenericService;
 import br.com.libshare.utils.ServicePath;
 import br.com.libshare.utils.StringUtils;
+import br.com.libshare.utils.bean.ParamsSharingAddRequest;
 import br.com.libshare.utils.bean.ParamsSharingRequest;
+import br.com.libshare.utils.bean.SharingItemRequest;
 import br.com.libshare.utils.bean.SharingResponse;
 import ch.qos.logback.classic.util.StatusListenerConfigHelper;
 
@@ -60,8 +65,18 @@ public class SharingService extends GenericService<SharingEntity, Long> {
 				for(SharingEntity sharing : sharings) {
 
 //					Long codComp = sharing.getId();
+					
+					if (sharing.getUserDestiny() != null) {
+						Long codUsu = sharing.getUserDestiny().getId();
+						sharing.getUserDestiny().setProfile(getProfile(codUsu));
+					}
+					
+					if (sharing.getUserOrigin() != null) {
+						Long codUsu = sharing.getUserOrigin().getId();
+						sharing.getUserOrigin().setProfile(getProfile(codUsu));
+					}
 
-//					List<SharingItemEntity> itens = getSharingItem(codComp);
+					//					List<SharingItemEntity> itens = getSharingItem(codComp);
 					List<SharingItemEntity> itens = sharing.getSharingItem();
 					if (itens.size() > 0) {
 						SharingResponse responseSharing = new SharingResponse(sharing, itens);
@@ -93,7 +108,7 @@ public class SharingService extends GenericService<SharingEntity, Long> {
 
 		return itens;
 	}
-
+	
 	private String buildQueryFromParams(ParamsSharingRequest params, boolean isItem) {
 		String query = QUERY_DEFAULT;
 		query = query.replace("{{TABELA}}", isItem ? "I" : "C");
@@ -150,11 +165,59 @@ public class SharingService extends GenericService<SharingEntity, Long> {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value="/newSharing/")
-	public ResponseEntity<?> insertSharing(@RequestBody SharingEntity sharing) throws Exception {
+	public ResponseEntity<?> insertSharing(@RequestBody ParamsSharingAddRequest sharingAdd) throws Exception {
+
+		SharingEntity sharing = new SharingEntity();
+		sharing.setUserDestiny(getUser(sharingAdd.getUserDestiny(), true));
+		sharing.setUserOrigin(getUser(sharingAdd.getUserOrigin(), true));
+		sharing.setSharingValue(sharingAdd.getSharingValue());
+		sharing.setSharingDateAndHour(new Date());
+
+		this.genericRepository.save(sharing);
+
+		if (sharing.getId() != null) {
+			sharing.setSharingItem(buildSharingItemEntity(sharing.getId(), sharingAdd.getSharingItens()));
+
+			this.genericRepository.save(sharing);
+		}
+
+		return new ResponseEntity<>(sharing, HttpStatus.OK);
+	}
+
+	private List<SharingItemEntity> buildSharingItemEntity(Long idSharing, List<SharingItemRequest> sharingItens) {
+		List<SharingItemEntity> list = null;
 		
-		super.insert(sharing);
-		
-		return new ResponseEntity<SharingEntity>(sharing, HttpStatus.OK);
+		if (sharingItens != null && !sharingItens.isEmpty()) {
+			list = new ArrayList<SharingItemEntity>();
+			for (SharingItemRequest sharingItemRequest : sharingItens) {
+				SharingItemEntity itemEntity = new SharingItemEntity();
+				itemEntity.setDevolutionDate(sharingItemRequest.getDevolutionDate());
+				itemEntity.setSharing(idSharing);
+				itemEntity.setSharingItemValue(sharingItemRequest.getSharingItemValue());
+				itemEntity.setSharingType(sharingItemRequest.getSharingType());
+				itemEntity.setStatusSharing(sharingItemRequest.getStatusSharing());
+
+				BookEntity book = getBook(sharingItemRequest.getBook());
+				book.setBookStatus("P");
+				itemEntity.setBook(book);
+
+				list.add(itemEntity);
+			}
+		}
+
+		return list;
+	}
+	
+	private BookEntity getBook(Long codLivro) {
+		BookEntity bookEntity =null;
+		Query profileResult = em.createNativeQuery("SELECT L.* FROM LIVRO L WHERE L.CODLIVRO = :CODLIVRO", BookEntity.class);
+		profileResult.setParameter("CODLIVRO", codLivro);
+		try {
+			bookEntity = (BookEntity) profileResult.getSingleResult();
+		}catch (NoResultException ignore) {
+		}
+
+		return bookEntity;
 	}
 
 	@Override
@@ -166,5 +229,34 @@ public class SharingService extends GenericService<SharingEntity, Long> {
 	public SharingEntity getOne(@PathVariable("id")Long id) {
 		SharingEntity sharing = super.getOne(id); 
 		return sharing;
+	}
+	
+	private UserEntity getUser(Long id, boolean profile) {
+		UserEntity userEntity =null;
+		Query userResult = em.createNativeQuery("SELECT U.* FROM USUARIO U WHERE U.CODUSU = :CODUSU", UserEntity.class);
+		userResult.setParameter("CODUSU", id);
+		try {
+			userEntity = (UserEntity) userResult.getSingleResult();
+		}catch (NoResultException ignore) {
+		}
+
+		if (profile) {
+			userEntity.setProfile(getProfile(userEntity.getId()));
+		}
+
+		return userEntity;
+	}
+	
+
+	private ProfileEntity getProfile(Long codUsu) {
+		ProfileEntity profileEntity =null;
+		Query profileResult = em.createNativeQuery("SELECT A.* FROM PERFIL A WHERE A.CODUSU = :CODUSU AND A.ATIVO = 'S'", ProfileEntity.class);
+		profileResult.setParameter("CODUSU", codUsu);
+		try {
+			profileEntity = (ProfileEntity) profileResult.getSingleResult();
+		}catch (NoResultException ignore) {
+		}
+
+		return profileEntity;
 	}
 }
