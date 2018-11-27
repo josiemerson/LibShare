@@ -40,7 +40,7 @@ public class HttpMessage {
 		return buildMsgReturn("info", msg, code);
 	}
 
-	private static ResponseEntity<?> buildMsgReturn(String type, String msg, HttpStatus code) {
+	public static ResponseEntity<?> buildMsgReturn(String type, String msg, HttpStatus code) {
 		ResponseEntity<?> response;
 		Map errorMap = new HashMap<>();
 		errorMap.put("typeMsg", type);

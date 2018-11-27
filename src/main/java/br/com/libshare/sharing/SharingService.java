@@ -130,7 +130,7 @@ public class SharingService extends GenericService<SharingEntity, Long> {
 
 			if (StringUtils.isNotEmpty(codUsu)) {
 				
-				sbQuery.append("AND C.CODUSUORIGEM = " + codUsu);
+				sbQuery.append(" AND C.CODUSUORIGEM = " + codUsu);
 			}			
 		} else if ("P".equals(params.getSharingWithMe())) {
 			sbQuery.append(" C.CODUSUORIGEM = " + codUsuLogged);			

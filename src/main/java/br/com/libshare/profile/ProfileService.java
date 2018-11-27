@@ -20,6 +20,7 @@ import br.com.libshare.user.UserEntity;
 import br.com.libshare.user.UserRepository;
 import br.com.libshare.utils.GenericService;
 import br.com.libshare.utils.ServicePath;
+import br.com.libshare.utils.msg.HttpMessage;
 
 @CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
 @RestController
@@ -64,7 +65,7 @@ public class ProfileService extends GenericService<ProfileEntity, Long> {
 	
 	private ResponseEntity<List<ProfileEntity>> getProfiles(String genre, Long codUsuLogged){
 		ResponseEntity<List<ProfileEntity>> response = null;
-		StringBuilder sbQuery = new StringBuilder("SELECT DISTINCT P.* FROM PERFIL P INNER JOIN LIVRO L ON (P.CODUSU = L.DONOLIVRO) WHERE L.GENERO = :GENERO AND P.ATIVO = 'S'");
+		StringBuilder sbQuery = new StringBuilder("SELECT DISTINCT P.* FROM PERFIL P INNER JOIN LIVRO L ON (P.CODUSU = L.DONOLIVRO) WHERE L.GENERO = :GENERO AND L.STATUSLIVRO NOT IN ('V', 'P') AND P.ATIVO = 'S'");
 		if (codUsuLogged != null) {
 			sbQuery.append(" AND P.CODUSU <> :CODUSULOGGED ");
 		}
@@ -78,10 +79,21 @@ public class ProfileService extends GenericService<ProfileEntity, Long> {
 		List<ProfileEntity> profiles = findProfiles.getResultList();
 
 		if (profiles.isEmpty()) {
-			Query findProfilesAll = em.createNativeQuery("SELECT P.* FROM PERFIL P WHERE P.ATIVO = 'S'", ProfileEntity.class);
-			List<ProfileEntity> profilesAll = findProfilesAll.getResultList();
-
-			response = new ResponseEntity<List<ProfileEntity>>(profilesAll, HttpStatus.NOT_FOUND);
+//			StringBuilder queryAll = new StringBuilder("SELECT P.* FROM PERFIL P WHERE P.ATIVO = 'S'");
+//			if (codUsuLogged != null) {
+//				queryAll.append(" AND P.CODUSU <> :CODUSULOGGED LIMIT 10 ");
+//			}
+//			Query findProfilesAll = em.createNativeQuery(queryAll.toString(), ProfileEntity.class);
+//			if (codUsuLogged != null) {
+//				findProfilesAll.setParameter("CODUSULOGGED", codUsuLogged);
+//			}
+//
+//			List<ProfileEntity> profilesAll = findProfilesAll.getResultList();
+//
+//			
+//			response = new ResponseEntity<List<ProfileEntity>>(profilesAll, HttpStatus.FOUND);
+			
+			response = new ResponseEntity<List<ProfileEntity>>(profiles, HttpStatus.OK);
 		} else {
 			response = new ResponseEntity<List<ProfileEntity>>(profiles, HttpStatus.OK);
 		}

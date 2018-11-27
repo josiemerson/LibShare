@@ -54,7 +54,7 @@ public class BookService extends GenericService<BookEntity, Long> {
 	public ResponseEntity<List<BookEntity>> getUserPerGenreBook(@PathVariable("user") String user, @PathVariable("genre") String genre) {
 		ResponseEntity<List<BookEntity>> response = null;
 		Query findBooks = em.createNativeQuery("SELECT L.* FROM LIVRO L WHERE "
-				+ "(:GENERO = '" + ALL_GENRE + "' OR L.GENERO = :GENERO) AND L.DONOLIVRO = :CODUSU AND L.STATUSLIVRO <> 'V'", BookEntity.class);
+				+ "(:GENERO = '" + ALL_GENRE + "' OR L.GENERO = :GENERO) AND L.DONOLIVRO = :CODUSU AND L.STATUSLIVRO NOT IN ('V', 'P')", BookEntity.class);
 		//COALESCE no mysql é o mesmo que NVL do oracle
 
 		findBooks.setParameter("GENERO", genre);
