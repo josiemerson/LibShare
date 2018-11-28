@@ -8,7 +8,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.transaction.UserTransaction;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -44,6 +47,9 @@ public class SharingService extends GenericService<SharingEntity, Long> {
 
 	@PersistenceContext
 	private EntityManager em;
+
+	@Autowired
+	protected JpaRepository<SharingItemEntity, Long> itemRepository;
 
 	@Override
 	public SharingEntity insert(@RequestBody SharingEntity sharing) throws Exception {
@@ -93,6 +99,53 @@ public class SharingService extends GenericService<SharingEntity, Long> {
 		}
 
 		return response;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value="/newSharing/")
+	public ResponseEntity<?> insertSharing(@RequestBody ParamsSharingAddRequest sharingAdd) throws Exception {
+
+		SharingEntity sharing = new SharingEntity();
+		sharing.setUserDestiny(getUser(sharingAdd.getUserDestiny(), true));
+		sharing.setUserOrigin(getUser(sharingAdd.getUserOrigin(), true));
+		sharing.setSharingValue(sharingAdd.getSharingValue());
+		sharing.setSharingDateAndHour(new Date());
+
+		this.genericRepository.save(sharing);
+
+		if (sharing.getId() != null) {
+			sharing.setSharingItem(buildSharingItemEntity(sharing.getId(), sharingAdd.getSharingItens()));
+
+			this.genericRepository.save(sharing);
+		}
+
+		return new ResponseEntity<>(sharing, HttpStatus.OK);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value="/saveStatusSharing/")
+	public ResponseEntity<?> saveStatusSharing(@RequestBody SharingItemRequest sharingItem) throws Exception {
+		SharingItemEntity itemEntity = null;
+		try {
+			StringBuilder sbQuery = new StringBuilder("SELECT I.* FROM ITEMCOMPARTILHAMENTO I WHERE I.CODCOMP = :CODCOMP AND I.CODITEMCOMP = :CODITEMCOMP");
+
+			Query updateSharingItem = em.createNativeQuery(sbQuery.toString(), SharingItemEntity.class);
+			updateSharingItem.setParameter("CODCOMP", sharingItem.getSharing());
+			updateSharingItem.setParameter("CODITEMCOMP", sharingItem.getSharingItem());
+
+			itemEntity = (SharingItemEntity) updateSharingItem.getSingleResult();
+
+			itemEntity.setStatusSharing(sharingItem.getStatusSharing());
+			String observation = sharingItem.getObservation();
+			if (!StringUtils.isEmpty(observation)) {
+				itemEntity.setObservation(observation);
+			}
+			
+			itemRepository.save(itemEntity);
+
+		} catch (Exception e) {
+			this.showError("Houve um problema ao salvar a resposta, entre em contato com a LibShare. Erro: " + e);
+		}
+
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	private List<SharingItemEntity> getSharingItem(Long codSharing) {
@@ -162,26 +215,6 @@ public class SharingService extends GenericService<SharingEntity, Long> {
 		}
 
 		return sbQuery.toString();
-	}
-	
-	@RequestMapping(method = RequestMethod.POST, value="/newSharing/")
-	public ResponseEntity<?> insertSharing(@RequestBody ParamsSharingAddRequest sharingAdd) throws Exception {
-
-		SharingEntity sharing = new SharingEntity();
-		sharing.setUserDestiny(getUser(sharingAdd.getUserDestiny(), true));
-		sharing.setUserOrigin(getUser(sharingAdd.getUserOrigin(), true));
-		sharing.setSharingValue(sharingAdd.getSharingValue());
-		sharing.setSharingDateAndHour(new Date());
-
-		this.genericRepository.save(sharing);
-
-		if (sharing.getId() != null) {
-			sharing.setSharingItem(buildSharingItemEntity(sharing.getId(), sharingAdd.getSharingItens()));
-
-			this.genericRepository.save(sharing);
-		}
-
-		return new ResponseEntity<>(sharing, HttpStatus.OK);
 	}
 
 	private List<SharingItemEntity> buildSharingItemEntity(Long idSharing, List<SharingItemRequest> sharingItens) {

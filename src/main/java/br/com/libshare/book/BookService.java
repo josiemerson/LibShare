@@ -150,7 +150,7 @@ public class BookService extends GenericService<BookEntity, Long> {
 				dataImage.codUsu = new Long(codUsu);
 			}
 			dataImage.nameFile =  fileName;
-			dataImage.codBook = book.getId();
+			dataImage.codBook = book.getId() == null ? 0L : book.getId();
 			try {
 				File file = ImageUtils.convertBase64ToFile(dataImage);				
 			}catch (Exception e) {

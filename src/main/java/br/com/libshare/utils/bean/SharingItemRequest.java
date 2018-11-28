@@ -10,12 +10,13 @@ public class SharingItemRequest {
 	private Long 	book;
 	private String 	observation;
 	private String 	statusSharing;
+	private Long	sharingItem;
 
 	public SharingItemRequest() {
 	}
 
 	public SharingItemRequest(Long sharing, String sharingType, Date devolutionDate, Float sharingItemValue,
-			Long book, String observation, String statusSharing) {
+			Long book, String observation, String statusSharing, Long sharingItem) {
 		super();
 		this.sharing = sharing;
 		this.sharingType = sharingType;
@@ -24,6 +25,7 @@ public class SharingItemRequest {
 		this.book = book;
 		this.observation = observation;
 		this.statusSharing = statusSharing;
+		this.sharingItem = sharingItem;
 	}
 
 	public Long getSharing() {
@@ -80,5 +82,13 @@ public class SharingItemRequest {
 
 	public void setStatusSharing(String statusSharing) {
 		this.statusSharing = statusSharing;
+	}
+
+	public Long getSharingItem() {
+		return sharingItem;
+	}
+
+	public void setSharingItem(Long sharingItem) {
+		this.sharingItem = sharingItem;
 	}
 }

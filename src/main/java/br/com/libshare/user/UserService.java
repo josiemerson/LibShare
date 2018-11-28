@@ -69,6 +69,10 @@ public class UserService extends GenericService<UserEntity, Long> {
 
 		ProfileEntity profile = user.getProfile();
 		if(profile != null) {
+			if (profile.getId() == null) {
+				profile.setId(userDB.getProfile().getId());
+			}
+
 			String img = treatmentImgGetName(user);
 			if (img != null) {
 
