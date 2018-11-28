@@ -1,5 +1,8 @@
 package br.com.libshare.sharing;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,7 +11,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.transaction.UserTransaction;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,22 +23,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.JsonObject;
-
 import br.com.libshare.book.BookEntity;
-import br.com.libshare.friends.FriendsEntity;
-import br.com.libshare.friends.FriendsResponse;
 import br.com.libshare.profile.ProfileEntity;
 import br.com.libshare.sharingItem.SharingItemEntity;
 import br.com.libshare.user.UserEntity;
 import br.com.libshare.utils.GenericService;
 import br.com.libshare.utils.ServicePath;
 import br.com.libshare.utils.StringUtils;
+import br.com.libshare.utils.TimeUtils;
 import br.com.libshare.utils.bean.ParamsSharingAddRequest;
 import br.com.libshare.utils.bean.ParamsSharingRequest;
 import br.com.libshare.utils.bean.SharingItemRequest;
 import br.com.libshare.utils.bean.SharingResponse;
-import ch.qos.logback.classic.util.StatusListenerConfigHelper;
 
 @CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
 @RestController
@@ -85,7 +83,14 @@ public class SharingService extends GenericService<SharingEntity, Long> {
 					//					List<SharingItemEntity> itens = getSharingItem(codComp);
 					List<SharingItemEntity> itens = sharing.getSharingItem();
 					if (itens.size() > 0) {
-						SharingResponse responseSharing = new SharingResponse(sharing, itens);
+						List<SharingItemEntity> itensReturn = new ArrayList<SharingItemEntity>();
+						for (SharingItemEntity item : itens) {
+							if (item.getStatusSharing().equals(params.getStatusBook())) {
+								itensReturn.add(item);
+							}
+						}
+
+						SharingResponse responseSharing = new SharingResponse(sharing, itensReturn);
 						listSharing.add(responseSharing);						
 					}
 				}
@@ -162,7 +167,7 @@ public class SharingService extends GenericService<SharingEntity, Long> {
 		return itens;
 	}
 	
-	private String buildQueryFromParams(ParamsSharingRequest params, boolean isItem) {
+	private String buildQueryFromParams(ParamsSharingRequest params, boolean isItem) throws ParseException {
 		String query = QUERY_DEFAULT;
 		query = query.replace("{{TABELA}}", isItem ? "I" : "C");
 
@@ -195,19 +200,19 @@ public class SharingService extends GenericService<SharingEntity, Long> {
 		}
 
 		if (StringUtils.isNotEmpty(params.getDtCompIni())) {
-			sbQuery.append(" AND C.DHCOMP >= '" + params.getDtCompIni() + "'");
+			sbQuery.append(" AND DATE(C.DHCOMP) >= '" + truncDateToString(params.getDtCompIni()) + "'");
 		}
 
 		if (StringUtils.isNotEmpty(params.getDtCompFim())) {
-			sbQuery.append(" AND C.DHCOMP <= '" + params.getDtCompFim() + "'");
+			sbQuery.append(" AND DATE(C.DHCOMP) <= '" + truncDateToString(params.getDtCompFim()) + "'");
 		}
 
 		if (StringUtils.isNotEmpty(params.getDtDevIni())) {
-			sbQuery.append(" AND I.DTDEVOL >= '" + params.getDtDevIni() + "'");
+			sbQuery.append(" AND DATE(I.DTDEVOL) >= '" + truncDateToString(params.getDtDevIni()) + "'");
 		}
 
 		if (StringUtils.isNotEmpty(params.getDtDevFim())) {
-			sbQuery.append(" I.DTDEVOL <= '" + params.getDtDevFim() + "'");
+			sbQuery.append(" AND DATE(I.DTDEVOL) <= '" + truncDateToString(params.getDtDevFim()) + "'");
 		}
 
 		if (StringUtils.isNotEmpty(params.getStatusBook())) {
@@ -215,6 +220,13 @@ public class SharingService extends GenericService<SharingEntity, Long> {
 		}
 
 		return sbQuery.toString();
+	}
+	
+	private String truncDateToString(Date data) throws ParseException {
+		String dataReturn = null;
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");  
+		
+		return dateFormat.format(data);
 	}
 
 	private List<SharingItemEntity> buildSharingItemEntity(Long idSharing, List<SharingItemRequest> sharingItens) {
